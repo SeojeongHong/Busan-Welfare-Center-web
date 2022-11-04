@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>WELLFARE-MAP</title>
+		<!-- 폰트 불러오기 : Google_Font_API-->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+		<!-- 공공 데이터 포털 key -->
+		<script>const data_key = 'K4Y6eL6gMHYqwyYllrDHSR8Vp8d0I0fLQw1Bq%2BOVauuqFaSLiKVPo4yBKMlrlAQnTkiSyj6xT4rl%2BO4BG0e0wg%3D%3D';</script>
+		<!-- 카카오 맵 API--> 
+		<script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=84ba00d17575d229820722c04a2713f3&libraries=clusterer,services"></script>
+		<!--주소 검색 팝업창 API-->
+		<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script> 
+		<!-- url에 대한 정보를 사용하기 위한 url.js 파일 사용  -->
+		<script type="text/javascript" src="url.js"></script>
+		<link rel="stylesheet" href="css/map.css" />
+	</head>
+
+<!--================================================================================================================================-->
+<!--=========================================================  body  ===============================================================-->
+<!--================================================================================================================================-->
+	<body>
+<!--카카오 API 기본 지도-->
+		<div id="map" style="width:100%;height:100%;"></div>
+
+<!--사이드바-->		
+		<!--사이드바1 열고닫는 icon-->
+		<input type="checkbox" id="icon" checked onclick="search_bar_on_off()">
+		<label for="icon">
+			<span style="border: solid 3px; color:rgb(21, 42, 63)"></span>
+			<span style="border: solid 3px; color:rgb(21, 42, 63) "></span>
+		</label>
+		<!--사이드바1 - 검색 결과-->
+		<div class="sidebar" style="z-index: 0;">
+			<!--상단 텍스트-->
+			<span id = "search_title" style="color:rgb(21, 42, 63); font-size:30px; letter-spacing :11px; padding:10px; font-weight:bold; margin-top:30px; 
+			position: sticky; margin-left: 170px; justify-content: center;"> 프로그램 검색 결과</span>
+			<span style="font-size:10pt; position: sticky; margin-left:-10px; color:red;">※ 거리, 비용별로 정렬가능</span>
+			<hr id = "search_line" style="color:rgb(21, 42, 63); margin-top:5px; height:3px; border:solid; border-width:3px; background-color: rgb(21, 42, 63);"> 
+			<!--데이터 표-->
+			<div style="color:rgb(21, 42, 63); position: absolute; width: 100%; height: 75%;  overflow:auto;">
+				<table id="res_search" style="color:rgb(21, 42, 63); margin-top: -20px; position: absolute; padding: 20px; table-layout: fixed; border-spacing: 10px;" width = "100%">
+					<tr>
+						<th width="15%" style="width: 77px; margin-top:0; margin-left:0px; padding: 0px;font-size: 20px; letter-spacing :3px; ">복지관</th>
+						<th style="font-size: 20px;margin-top:0;letter-spacing :3px;">프로그램</th>
+						<th style="font-size: 20px; margin-top:0;letter-spacing :3px;">상세</th>
+						<th onclick="sort_lst(3)" style="margin-top:0;width: 90px;cursor: pointer;font-size: 20px; letter-spacing :3px;" width="10%">비용</th> <!--클릭시 정렬 sort_lst-->
+						<th onclick="sort_lst(4)" style="margin-top:0;cursor: pointer;font-size: 20px; letter-spacing :3px;" width="10%">거리</th>
+						<th style=" font-size: 20px; letter-spacing :3px;"width="10%">관심</th>
+					</tr>
+				</table>
+			</div>
+		</div>
+		 <!-- 관심 체크박스, 사이드바2를 미리 배치하기 위하여 아무 역할을 하지 않는 체크박스 위치시킴  -->
+		<input type="checkbox" id="icon_int">
+		<label for="icon_int"></label>
+		
+		<!--사이드바2 - 관심 목록-->	
+		<div class="interest_bar" >
+			<div style="position: absolute; width: 100%; height: 100%;  overflow:auto;">
+				<!--데이터 표-->
+				<div style="font-size: 25x;">관심 프로그램 목록</div>
+				<table id="int_lst" style="margin-top: -10px; position: absolute; padding: 10px; table-layout: fixed; border-spacing: 10px;" width = "100%">
+					<tr>
+						<th width="30%" style="font-size: 20px; ">복지관명</th>
+						<th width="50%" style="font-size: 20px;">프로그램명</th>
+						<th width="20%" style="font-size: 20px; ">관심</th>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+<!--상단 고정 바-->
+     	<!--검색 창 박스 -->
+		<div class="search">
+			<!--로고-->	
+			<span class = "logo" id ="home" onclick="location.href='intro.html'">
+				<img src="img/logo.png" width="150", height="150">
+			</span>
+			<!--검색폼 및 버튼-->
+			<div>
+				<span>
+				<div style="position:relative; top:30px; margin-left:200px; display: flex; flex-wrap: wrap;">
+					<input id = "search_text" type="text" size="" placeholder=" 검색어를 입력하세요" 
+						style="letter-spacing :7px; font-size: 22px; flex-grow: 1; font-family: 'Gowun Dodum', sans-serif;" 
+						onkeyup="if(window.event.keyCode==13){search(-1)}"/> <!--엔터키작동-->	
+					<span class = "btn" id="search" style="letter-spacing: 5px; margin-left: 10px; flex-grow: 0; " onclick=search(-1) >
+						검 색
+					</span>
+					<span>
+					</span>
+					<span class = "btn" id="cur_loc" style="margin-right: 10px; border:thin; border-color: rgb(161, 25, 132);border: 
+					groove; color:rgb(235, 235, 199); font-size:15pt; letter-spacing: 5px; flex-grow: 0; padding-left:7px;padding-right:3px; 
+					padding-bottom:11px; background-color: rgb(36, 5, 65);" onclick=register_loc() >
+						현재 위치 등록
+					</span>
+						<span class = "btn" id="cur_loc" style="border:thin;border-color: rgb(54, 54, 37);border: 
+						groove;color:rgb(235, 235, 199); font-size:15pt; letter-spacing: 5px; margin-right: 50px; 
+						flex-grow: 0; padding-left:7px;padding-right:3px; padding-bottom:11px; background-color: rgb(36, 5, 65);" onclick=map_clear() >
+						초기화
+					</span>
+				</div>
+				</span>
+			</div>
+		</div>
+
+<!--상단 고정바 우측 하단 체크 박스-->
+		<span class="chk" id="chk_box">
+			<ul>
+				<li id="__parking"><label for="chk_parking" style="cursor:pointer"><input type="checkbox" class="ico_comm" id = "chk_parking" onclick="chk_parking_on_off()" > 자차운용</label></li></li>
+				<li id="__kids"><label for="chk_kids" style="cursor:pointer"><input type="checkbox" class="ico_comm" id = "chk_kids" onclick="chk_kids_on_off()" > 자녀 동반</label></li>
+				<li id="__accident"><label for="chk_accident" style="cursor:pointer"><input type="checkbox" class="ico_comm" id = "chk_accident" onclick="chk_accident_on_off()"> 사고 다발 지역</label></li>
+				<li id="__free"><label for="chk_free" style="cursor:pointer"><input type="checkbox" class="ico_comm" id = "chk_free" onclick="show_free()"> 무료 강의</label></li>
+				<li id="__liked"><label for="chk_liked" style="cursor:pointer"><input type="checkbox" class=ico_comm id = "chk_liked" onclick="show_liked()"> 관심</label></li>
+			</ul>
+		</span>
+
+<!-- 거리 확인, 주변 탐색 시 일시적으로 나타난다. -->
+		<span class="custom_typecontrol radius_border" id="rng_box"
+			style="display:none; position : absolute; 
+			top:160px;font-family: 'Gowun Dodum', sans-serif; font-size:13px;
+			right:175px; border-radius: 10px;margin-top:10px; ; color:ivory;
+			width:265px; border:1px; border-color: darkgray;z-index: 11;  padding: 5px; font-weight:bold;
+			height:30px;background-color: rgba(21, 42, 63,0.5); z-index: 10;">
+			<div id = "prk_rng" width: 33%; style="display: inline-block;"> </div>
+			<div id = "kds_rng" width: 33%; style="display: inline-block;"> </div>
+			<div id = "cur_rng" width: 33%; style="display: inline-block;"></div>
+		</span>
+
+<!-- 지도타입, 일반/스카이뷰(위성지도) 선택 가능 -->
+		<span class="custom_typecontrol radius_border" style="display:block; position : absolute; 
+			top:160px;font-family: 'Gowun Dodum', sans-serif; font-size:18px;
+			right:5px; border-radius: 10px;margin-top:10px; ; color:ivory;
+			width:155px; border:1px; border-color: darkgray;z-index: 11;  padding: 5px; font-weight:bold;
+			height:30px;background-color: rgba(21, 42, 63,0.5); z-index: 10;">
+			<span id="btnRoadmap" style="cursor: pointer;padding-left:5px; border-radius: 10px;" class="normal" onclick="setMapType('roadmap')">일반지도 | </span>
+			<span></span>
+			<span id="btnSkyview" style=" cursor: pointer;border-radius: 10px;"class="sky" onclick="setMapType('skyview')">스카이뷰</span>
+		</span>
+
+<!-- 지도 확대 축소, 버튼을 통한 지도 LEVEL 값 변경-->
+		<span class="custom_zoomcontrol radius_border" style="border:1px; border-color: darkgray;border-radius: 4px;
+		display:block; position : absolute; top:220px; right:5px; width:30px; font-family: 'Gowun Dodum', sans-serif; font-size:18px; 
+		height:65px;background-color: rgba(255, 255, 255, 0.363); z-index: 10;"> 
+			<span  style="cursor: pointer;"onclick="zoomIn()"><img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
+			<span style="cursor: pointer;"onclick="zoomOut()"><img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
+		</span>
+		
+<!--프로그램 추천 버튼-->
+		<div class= "go_rcdpro" id="go_rcdpro" onclick="location.href='rcd_pro.html'">
+			<div style="margin-top: 20%;"> 프로그램 <br> 추천 </div>
+		</div>
+
+	
+<!--================================================================================================================================-->
+<!--=========================================================  Java Script  ========================================================-->
+<!--================================================================================================================================-->
+		<script src="/js/main_map.js"></script>
+	</body>
+</html>

@@ -1,0 +1,65 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>WELLFAR-PROGRAM</title>
+        <link rel="stylesheet" href="css/rcd.css" />
+        <script>
+            //공공데이터(복지관)을 사용하기 위한 키 
+            const data_key = 'K4Y6eL6gMHYqwyYllrDHSR8Vp8d0I0fLQw1Bq%2BOVauuqFaSLiKVPo4yBKMlrlAQnTkiSyj6xT4rl%2BO4BG0e0wg%3D%3D';
+            //태그 id를 인자로 받아 화면에서 사라지게 하는 함수 
+            function chg_efct(id){
+                var p1 = document.getElementById(id);
+                p1.style.display = "none";   
+            }
+            //8.7초후 chg_efct()함수가 수행되도록 하는 함수
+            function fade_reset(){
+                setTimeout(() => chg_efct("open_efct"),8700);
+            }
+        </script>
+        <!-- word clould를 만들기위한 "any chart" api를 사용 -->
+        <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script> 
+        <script src="https://cdn.anychart.com/releases/v8/js/anychart-tag-cloud.min.js"></script>
+        <!--외부 폰트 사용 -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet"> 
+    <body>
+        <!--any chart의 word clould가 불러와지는 공간 -->
+        <div class="chart-area" style="padding-right: 10px;">
+            <div id="container" style="width:70%; height:95%;"></div>
+        </div>
+
+        <!--intro 페이지로 이동하기 위한 로고 버튼 -->
+        <span onclick="location.href='intro.html'" style="position: absolute; left: 72.5%; top: -12.5%;" width="wrap" height="wrap">
+            <img src="img/logo.png" width="400", height="400">
+        </span>
+
+        <!--워드 클라우드를 통해서 선택된 타겟의 프로그램이 출력되는 공간 -->
+        <div style="position: absolute; width:30%; height: 70%; left: 70%; top: 30%; background-color: #D8E6F2; border-radius: 10px 0px 0px 10px;">
+            <div style="position: absolute; left: 0%; top: 0%; width: 100%; height: 10%; background-color: #537AC6; border-radius: 10px 0px 0px 0px;" ></div>
+            <span style="position: absolute; left: 10%; top: 2%; font-size: 30px;">복지관명</span>
+            <span style="position: absolute; left: 60%; top: 2%; font-size: 30px;">프로그램명</span>
+            <div style="position: absolute; width: 100%; height: 80%; top: 12%; left: 0%; overflow:auto;">
+                <!--table을 이용한 표 형태로 출력-->
+                <table id="program_lst" style="position: absolute; padding: 20px;" width = "100%">
+                    <colgroup>
+                        <col style="width:50%">  <!--각 원소는 비율이 반반으로 나타남-->
+                        <col style="width:50%">
+                    </colgroup>
+                </table>
+            </div>
+        </div>
+        
+        <!--웹페이지 시작 애니메이션에 사용되는 로고 텍스트 -->
+        <div id="open_efct" style="left: -30%; top: 0%;">
+            <span class = "logo_text"  id = "logo_text" style="top: 40%; left: 50%; position: absolute; font-size: 100px; color: white;">
+                WELLFARE  <!--깜빡 거리다가 완전히 나타난 후 왼쪽으로 모이고 사라짐 -->
+            </span>
+        </div>
+        
+<!--================================================================================================================================-->
+<!--=========================================================  Java Script  ========================================================-->
+<!--================================================================================================================================-->
+        <script src="/js/rcd.js"></script>
+    </body>
+</html>
