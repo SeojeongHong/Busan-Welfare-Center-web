@@ -3,9 +3,234 @@
     <head>
         <meta charset="UTF-8">
         <title>WELLFARE</title>
-        <link rel="stylesheet" href="css/intro.css" />
-        <script src="/js/intro.js">
+        <style>
+            /*body에 이미지를 입혀서 배경으로 활용*/
+            body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                background-image: url('back1.png');
+                background-repeat: no-repeat;
+                background-size : cover;
+			    font-family: 'Gowun Dodum', sans-serif; /*폰트 설정*/
+            }
+            /*반투명의 막을 body의 위에 씌운다.*/
+            body::before{
+                opacity: 0.2;
+                content: "";
+                background-color: #000;
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                right: 0px;
+                bottom: 0px;
+            }
+            /*로고 이미지에 사용되는 id*/
+            #logo{
+                position: absolute; 
+                left: 20px; 
+            }
+            /*화면 상단의 4개의 탭에 적용하기위한 class*/
+            .menu_item {
+                color: #fff;
+                position: absolute;
+                text-align: center;
+                width: 200px;
+                padding: 10px;
+                font-size: 20px;
+            }
+            /*탭에 hover 시 애니메이션을 위한 css*/
+            .menu_item::after {
+                text-decoration: underline; 
+                content: '';
+                border-bottom: 3px solid white;
+                transform: scaleX(0); 
+                transition: transform 500ms ease; 
+            }
+            .menu_item:hover:after{
+                text-decoration: underline; 
+                content: '';
+                width: 100%;
+                height: 1px;
+                display: block;
+                margin-top: 5px;
+                border-bottom: 3px solid white;
+                transform: scaleX(1);/*a 속성에 hover시 after를 기존 크기로 변경*/
+            }
+            /* 클릭 후 클릭된 탭을 표시하기 위한 css */
+            #menu_item_fix{
+                color: #fff;
+                position: absolute;
+                text-decoration: underline; 
+                content: '';
+                width: 100%;
+                display: block;
+                margin-top: 5px;
+                border-bottom: 3px solid white;
+                transform: scaleX(1);
+            }
+            /* 설명을 위한 텍스트에 적용되는 class */
+            #intro_exp{
+                color: white; 
+                font-size: 20px; 
+                position: absolute; 
+                text-shadow: 2px 2px 2px rgb(95, 93, 93); 
+            }
+            /* 텍스트를 표시하기 위한 검은색 반투명 판을 위한 css */
+            #box{
+                background-color: black;
+                position: absolute; 
+                opacity: 0.5;
+            }
+            /* 탭 변환 시 발생하는 애니메이션 효과를 위한 class*/
+            .tab_chg_effect {           
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background-color: white;
+                animation-duration: 1s;
+                animation-name: tab_anime;
+            }
+            /* 화면 전체를 흰색으로 가득 채우고 투명도를 0으로 1초만에 낮추는 애니메이션 */
+            @keyframes tab_anime {
+                from { 
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
+            /* 로고 이미지에 적용하는 애니메이션 */
+           .logo_efct{
+                animation: logo_anm 2s cubic-bezier(0.250, 0.460, 0.450, 0.940);
+            }
+            /* 좌측 상단에서 중간으로 내려온다. */
+            @keyframes logo_anm {
+                0% {
+                    transform: rotateY(-20deg) rotateX(35deg) translate(-300px, -300px) skew(35deg, -10deg);
+                    opacity: 0;
+                }
+                100% {
+                    transform: rotateY(0) rotateX(0deg) translate(0, 0) skew(0deg, 0deg);
+                    opacity: 1;
+                }
+            }
+            /* 텍스트에 적용하는 애니메이션 */
+            .text_efct{
+                animation: text_anm 2s cubic-bezier(0.555, 0.000, 0.000, 0.995);
+            }
+            /* 좌측에서 모여있다가 오른쪽으로 이동하느 애니메이션 */
+            @keyframes text_anm {
+                0% {
+                    letter-spacing: -0.5em;
+                    opacity: 0;
+                }
+                40% {
+                    opacity: 0.6;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+            /* 텍스트에 적용하는 애니메이션2 */
+            .text_efct2 {
+                animation: text_anm2 2s cubic-bezier(1.000, 0.005, 0.440, 1.000);
+            }
+            /* 블러처리를 주다가 0으로 하여 블러 속에서 텍스트가 등장하는 애니메이션  */
+            @keyframes text_anm2 {
+                0% {
+                    -webkit-filter: blur(12px);
+                            filter: blur(12px);
+                    opacity: 0;
+                }
+                100% {
+                    -webkit-filter: blur(0px);
+                            filter: blur(0px);
+                    opacity: 1;
+                }
+            }
+        </style>
+
+        <script>
+            // 복지관 api를 사용하기 위한 키
+			const data_key = 'DhEYpgrhSDsl7nbQNBvuixx29CNaouyml4BnPpPa2c4b1WF0PwlJP5d36QJpXCxqZ9W450UkwfMl1qtY0046kA%3D%3D';
+            // 소개와 사용법은 페이지 전환이 아닌 태그의 구성만 바꿔서 페이지가 전환된 것 처럼 동작한다.
+            // 따라서 선택된 탭외의 다른 탭의 요소들은 숨긴다. 
+            // 각 탭의 요소를 div내에 넣어서 id를 지정하고 이를 통해서 block / none 처리를 수행한다. 
+
+            // 메인 화면외의 모든 탭을 숨기는 함수
+            function hide(){
+                document.body.style.backgroundImage = "url('back1.png')";
+                                
+                var p = document.getElementById("fade_block");
+                p.style.display = "block";
+                fade_reset();
+
+                var m = document.getElementById("main");    
+                m.style.display = 'block';
+
+                var i = document.getElementById("introduce");
+                i.style.display = "none"
+
+                var h = document.getElementById("manual");
+                h.style.display = "none";
+                
+                var i_i = document.getElementById("menu_item_fix"); //선택된 탭을 알려주는 태그도 숨김 처리 
+                i_i.style.display = "none";
             
+            }
+            // 소개 탭외의 모든 탭을 숨기는 함수 
+            function pagechange1(){
+                var p = document.getElementById("fade_block");
+                p.style.display = "block";
+                fade_reset();
+
+                document.body.style.backgroundImage = "url('back2.png')";
+                var m = document.getElementById("main");
+                m.style.display = 'none';
+
+                var i = document.getElementById("introduce");
+                i.style.display = "block"
+
+                var h = document.getElementById("manual");
+                h.style.display = "none"
+
+                var i_i = document.getElementById("menu_item_fix");
+                i_i.style.display = "block";
+                i_i.style.left = "410px";
+
+            }
+            // 상용법 탭외의 모든 탭을 숨기는 함수 
+            function pagechange2(){
+                document.body.style.backgroundImage = "url('back3.png')";
+
+                var p = document.getElementById("fade_block");
+                p.style.display = "block";
+                fade_reset();
+
+                var m = document.getElementById("main");
+                m.style.display = 'none';
+
+                var i = document.getElementById("introduce");
+                i.style.display = "none"
+
+                var h = document.getElementById("manual");
+                h.style.display = "block"
+                
+                var i_i = document.getElementById("menu_item_fix");
+                i_i.style.display = "block";
+                i_i.style.left = "610px";
+            }
+
+            // 화면이 전환되는 애니메이션에 사용되는 태그를 none 처리하여 사라지게 하는 함수 
+            function chg_efct(){
+                var p = document.getElementById("fade_block");
+                p.style.display = "none";
+            }
+            // 탭 전환 애니메이션의 효과가 끝나서 모든 화면을 가리기 전에 해당 태그를 사라지도록 하는 함수
+            function fade_reset(){
+                setTimeout(() => chg_efct(), 990);  //1초동안 애니메이션이 수행되므로 0.99초에 태그를 사라지게 한다. 
+            }
         </script>
         <!-- 외부 폰트를 사용하기 위한 url  -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +242,7 @@
         <div id = "main">
             <!-- 애니메이션이 적용된 로고 이미지와 텍스트로 구현 -->
             <span class = "logo_efct" id="logo" style="top: 15%; left: 35%; ">
-                <img src="img/logo.png" width="400", height="400">
+                <img src="logo.png" width="400", height="400">
             </span>
             <span class="text_efct" style="color: white; font-size: 20px; position: absolute; top: 60%; left: 39%;">
                 Busan Welfare Program 
@@ -36,7 +261,7 @@
             <div id = "box" style="width: 50%; height: 70%; top: 15%"></div>
             <div id = "box" style="width: 50%; height: 70%; left: 50%; top: 15%; background-color: white;"></div>
             <span id="logo" class="logo_efct" style="top: 5%; left: 10%;">
-                <img src="img/logo.png" width="400", height="400">
+                <img src="logo.png" width="400", height="400">
             </span>
             <span class="text_efct2" id="intro_exp" style="top: 50%; left: 10%;">
                 "WELLFARE"는 부산시의 복지관에서 운영하는
@@ -138,7 +363,7 @@
             <span id="menu_item_fix" style="width: 200px; height: 40px; display: none;"></span>
             <!-- 로고 이미지 클릭 시 main 구성의 태그를 보여준다. -->
             <span id="logo" onclick="hide()">
-                <img src="img/logo.png" width="150" height="150" style="margin-top: -20%;">
+                <img src="logo.png" width="150" height="150" style="margin-top: -20%;">
             </span>
             <!-- 소개 탭 클릭 시 소개 구성의 태그를 보여준다.  -->
             <span id = "page_fade" class="menu_item" style="left: 400px;" onclick="pagechange1()">
@@ -160,7 +385,92 @@
         
         <!-- 화면 전환 효과를 위한 태그-->
         <div class = "tab_chg_effect" id = "fade_block"></div>
+
+<!--================================================================================================================================-->
 <!--=========================================================  Java Script  ========================================================-->
-        <script src="/js/intro_body.js"></script>
+<!--================================================================================================================================-->
+        <script>
+            var center_lst = [];    // 파싱한 복지관 데이터를 객체로 저장하는 배열 
+            const lst = document.getElementById("center_lst");  // 테이블의 dom 객체 
+
+            // 복지관 데이터 파싱 
+            var xhr = new XMLHttpRequest();
+            var url = 'http://apis.data.go.kr/6260000/SocialWelfareCenterProgramService/getProgramInfo'; /*URL*/
+            var queryParams = '?' + encodeURIComponent('serviceKey') + '='+data_key; /*Service Key*/
+            queryParams += '&' + encodeURIComponent('numOfRows') + '=' + encodeURIComponent('10000'); /**/
+            queryParams += '&' + encodeURIComponent('pageNo') + '=' + encodeURIComponent('1'); /**/
+            queryParams += '&' + encodeURIComponent('resultType') + '=' + encodeURIComponent('json'); /**/
+            fetch(url+queryParams)
+            .then(res => res.json())
+            .then(resJson => {
+                // 파싱한 데이터 중 item 항목만 가져온다. 
+                var centers = resJson.getProgramInfo.item;
+                // 반복문을 통해서 복지관 이름과 전화번호만 객체에 저장 
+                for (var i = 0; i < centers.length; i++) {
+                    var center ={
+                        center_nm: centers[i]["center_nm"],
+                        tel: centers[i]["tel"],
+                    }
+                    center_lst.push(center); //배열에 객체 저장 
+                }
+                // 정렬한 객체 배열을 저장할 변수 선언 후 복지관 이름순으로 정렬 
+                let sorted_lst;
+                sorted_lst = center_lst.sort(function(a,b){
+                    let x = a.center_nm;    // 이름간의 비교 
+                    let y = b.center_nm;
+                    if(x<y){
+                        return -1;
+                    }
+                    else{
+                        return 0; 
+                    }
+                })
+                
+                // 정렬한 배열을 반복문을 통해서 복지관별 프로그램 수를 count하여 table에 추가 
+                var count = 0;          // 등록된 복지관 수를 count하기 위한 변수
+                var program_count = 1;  // 프로그램 수를 count하기 위한 변수
+                for (var i=0; i<=sorted_lst.length-1; i++) {
+                    if(i == sorted_lst.length-1){               // 마지막 배열의 원소의 경우 실행되는 구간-> 저장하고 반복문 탈출 
+                        const addRow = lst.insertRow();         // 새로운 행을 생성
+
+                        const cell_1 = addRow.insertCell(0);    // 새로운 행에 3개의 cell을 삽입 -> 3열 
+                        const cell_2 = addRow.insertCell(1);
+                        const cell_3 = addRow.insertCell(2);
+
+                        //3가지 cell에 대하여 복지관 데이터 저장
+                        cell_1.innerText = sorted_lst[i].center_nm; // 복지관 이름
+                        cell_2.innerText = program_count;           // 운영 프로그램 수 
+                        cell_3.innerText = sorted_lst[i].tel;       // 복지관 전화번호 
+        
+                        count++;                                    // 복지관 수 증가
+                        break;
+                    }
+                    if(sorted_lst[i].center_nm == sorted_lst[i+1].center_nm){
+                        program_count++;                        // 이 다음 배열의 원소와 이름이 동일한 경우 -> 프로그램의 수 증가
+                    }
+                    else{
+                        const addRow = lst.insertRow();         // 위와 동일하게 수행 
+
+                        const cell_1 = addRow.insertCell(0);
+                        const cell_2 = addRow.insertCell(1);
+                        const cell_3 = addRow.insertCell(2);
+
+                        cell_1.innerText = sorted_lst[i].center_nm;
+                        cell_2.innerText = program_count+" ";
+                        cell_3.innerText = sorted_lst[i].tel;
+
+                        program_count=1;                        // 프로그램 수 초기화 
+                        count++;                                // 복지관 수 증가
+                    }
+                }
+            // 등록된 복지관의 수 html 태그에 전달 
+            var lst_title = document.getElementById("lst_title");
+            lst_title.innerText = "등록된 복지관(" + count+")";
+            })
+            
+            // 초기 탭 전환 효과 후 해당 태그를 지우기 위하여 함수 호출
+            fade_reset();
+            
+        </script>
     </body>
 </html>
