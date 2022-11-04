@@ -1,0 +1,145 @@
+/*body에 이미지를 입혀서 배경으로 활용*/
+            body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                background-image: url('/img/back1.png');
+                background-repeat: no-repeat;
+                background-size : cover;
+			    font-family: 'Gowun Dodum', sans-serif; /*폰트 설정*/
+            }
+            /*반투명의 막을 body의 위에 씌운다.*/
+            body::before{
+                opacity: 0.2;
+                content: "";
+                background-color: #000;
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                right: 0px;
+                bottom: 0px;
+            }
+            /*로고 이미지에 사용되는 id*/
+            #logo{
+                position: absolute; 
+                left: 20px; 
+            }
+            /*화면 상단의 4개의 탭에 적용하기위한 class*/
+            .menu_item {
+                color: #fff;
+                position: absolute;
+                text-align: center;
+                width: 200px;
+                padding: 10px;
+                font-size: 20px;
+            }
+            /*탭에 hover 시 애니메이션을 위한 css*/
+            .menu_item::after {
+                text-decoration: underline; 
+                content: '';
+                border-bottom: 3px solid white;
+                transform: scaleX(0); 
+                transition: transform 500ms ease; 
+            }
+            .menu_item:hover:after{
+                text-decoration: underline; 
+                content: '';
+                width: 100%;
+                height: 1px;
+                display: block;
+                margin-top: 5px;
+                border-bottom: 3px solid white;
+                transform: scaleX(1);/*a 속성에 hover시 after를 기존 크기로 변경*/
+            }
+            /* 클릭 후 클릭된 탭을 표시하기 위한 css */
+            #menu_item_fix{
+                color: #fff;
+                position: absolute;
+                text-decoration: underline; 
+                content: '';
+                width: 100%;
+                display: block;
+                margin-top: 5px;
+                border-bottom: 3px solid white;
+                transform: scaleX(1);
+            }
+            /* 설명을 위한 텍스트에 적용되는 class */
+            #intro_exp{
+                color: white; 
+                font-size: 20px; 
+                position: absolute; 
+                text-shadow: 2px 2px 2px rgb(95, 93, 93); 
+            }
+            /* 텍스트를 표시하기 위한 검은색 반투명 판을 위한 css */
+            #box{
+                background-color: black;
+                position: absolute; 
+                opacity: 0.5;
+            }
+            /* 탭 변환 시 발생하는 애니메이션 효과를 위한 class*/
+            .tab_chg_effect {           
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background-color: white;
+                animation-duration: 1s;
+                animation-name: tab_anime;
+            }
+            /* 화면 전체를 흰색으로 가득 채우고 투명도를 0으로 1초만에 낮추는 애니메이션 */
+            @keyframes tab_anime {
+                from { 
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
+            /* 로고 이미지에 적용하는 애니메이션 */
+           .logo_efct{
+                animation: logo_anm 2s cubic-bezier(0.250, 0.460, 0.450, 0.940);
+            }
+            /* 좌측 상단에서 중간으로 내려온다. */
+            @keyframes logo_anm {
+                0% {
+                    transform: rotateY(-20deg) rotateX(35deg) translate(-300px, -300px) skew(35deg, -10deg);
+                    opacity: 0;
+                }
+                100% {
+                    transform: rotateY(0) rotateX(0deg) translate(0, 0) skew(0deg, 0deg);
+                    opacity: 1;
+                }
+            }
+            /* 텍스트에 적용하는 애니메이션 */
+            .text_efct{
+                animation: text_anm 2s cubic-bezier(0.555, 0.000, 0.000, 0.995);
+            }
+            /* 좌측에서 모여있다가 오른쪽으로 이동하느 애니메이션 */
+            @keyframes text_anm {
+                0% {
+                    letter-spacing: -0.5em;
+                    opacity: 0;
+                }
+                40% {
+                    opacity: 0.6;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+            /* 텍스트에 적용하는 애니메이션2 */
+            .text_efct2 {
+                animation: text_anm2 2s cubic-bezier(1.000, 0.005, 0.440, 1.000);
+            }
+            /* 블러처리를 주다가 0으로 하여 블러 속에서 텍스트가 등장하는 애니메이션  */
+            @keyframes text_anm2 {
+                0% {
+                    -webkit-filter: blur(12px);
+                            filter: blur(12px);
+                    opacity: 0;
+                }
+                100% {
+                    -webkit-filter: blur(0px);
+                            filter: blur(0px);
+                    opacity: 1;
+                }
+            }
